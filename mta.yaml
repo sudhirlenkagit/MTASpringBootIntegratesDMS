@@ -1,0 +1,30 @@
+_schema-version: '3.0.0'
+ID: com.ods.sampleApplication
+description: Sample Application
+version: 1.0.0
+modules:
+  - name: SampleSAPBTPApplication
+    type: java
+    path: SampleSAPBTPApplication
+    parameters:
+        stack: cflinuxfs4
+        memory: 2048M
+        instances: 1
+        buildpacks:
+           - java_buildpack
+        build-parameters:
+             builder: custom
+             timeout: 10m
+             build-result: target/SampleSAPBTPApplication-*.jar
+             commands:
+               - mvn clean install -Dcheckstyle.skip -DskipTests=true -Pdev
+    requires:
+      - name: BTPDestinationResource
+# Binding services
+resources:
+  - name: BTPDestinationResource
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service-name: MyDestinationInstance
+      service-plan: lite
+      service: destination
